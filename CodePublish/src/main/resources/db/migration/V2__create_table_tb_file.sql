@@ -1,0 +1,6 @@
+CREATE TABLE tb_file(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(255),
+    url VARCHAR(255) NOT NULL
+)
