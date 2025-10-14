@@ -1,10 +1,9 @@
 package com.ufersa.CodePublish.components.publication.api.dtos;
 
+import com.ufersa.CodePublish.commons.api.dtos.CategoryDto;
+import com.ufersa.CodePublish.commons.api.dtos.ProgramingLanguageDto;
 import com.ufersa.CodePublish.commons.api.dtos.TagDto;
-import com.ufersa.CodePublish.components.publication.domain.entities.Category;
 import com.ufersa.CodePublish.components.publication.domain.entities.ProgramingLanguages;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.List;
@@ -19,11 +18,16 @@ public class PublicationDto {
 
     private String description;
 
-    private ProgramingLanguages programingLanguage;
-
     private List<PublicationComponentDto> components;
 
-    private Category category;
+    private CategoryDto category;
+
+    private ProgramingLanguageDto programingLanguage;
 
     private Set<TagDto> tags;
+
+    private Integer upvotesAmount;
+    private Integer downvotesAmount;
+
+    private String authorName;
 }

@@ -27,6 +27,19 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
 
+    @GetMapping("/current")
+    public ResponseEntity<ApiResponse<UserDto>> getCurrent(
+            @CookieValue("accessToken") String token,
+            HttpServletRequest request
+    ){
+        User user = userService.getCurrentUser(token);
+        UserDto userDto = userMapper.userToUserDto(user);
+
+        ApiResponse<UserDto> response = ResponseUtil
+                .success(userDto,"Usuário encontrado",request.getRequestURI());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserDto>>> getAll(HttpServletRequest request) {

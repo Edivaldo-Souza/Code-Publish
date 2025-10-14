@@ -4,6 +4,7 @@ import { useState, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '@/lib/api';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -24,8 +25,11 @@ export default function LoginPage() {
       password: password,
     });
 
-    const redirectTo = searchParams.get('redirect_to');
+    const currentUser = await api.get('v1/users/current')
 
+    localStorage.setItem("code_publish_username",currentUser.data.data.username)
+    const redirectTo = searchParams.get('redirect_to');
+    toast.success("Login efetuado com sucesso!")
     router.push( redirectTo || '/home');
 
   } catch (err: any) {
@@ -34,7 +38,6 @@ export default function LoginPage() {
     } else {
       setError('Ocorreu um erro. Tente novamente mais tarde.');
     }
-    console.error(err);
   } finally {
     setIsLoading(false);
   }

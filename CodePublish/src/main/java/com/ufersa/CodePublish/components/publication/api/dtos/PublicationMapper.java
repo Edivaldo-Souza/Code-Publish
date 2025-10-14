@@ -1,8 +1,11 @@
 package com.ufersa.CodePublish.components.publication.api.dtos;
 
+import com.ufersa.CodePublish.commons.api.dtos.CategoryDto;
+import com.ufersa.CodePublish.commons.api.dtos.ProgramingLanguageDto;
 import com.ufersa.CodePublish.commons.api.dtos.TagDto;
+import com.ufersa.CodePublish.commons.domain.entities.Category;
+import com.ufersa.CodePublish.commons.domain.entities.ProgramingLanguage;
 import com.ufersa.CodePublish.commons.domain.entities.Tag;
-import com.ufersa.CodePublish.components.publication.domain.entities.Category;
 import com.ufersa.CodePublish.components.publication.domain.entities.ProgramingLanguages;
 import com.ufersa.CodePublish.components.publication.domain.entities.Publication;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +29,17 @@ public class PublicationMapper {
         publicationDto.setDescription(publication.getDescription());
 
         if(publication.getProgramingLanguage()!=null){
-            publicationDto.setProgramingLanguage(ProgramingLanguages.valueOf(
-                    publication.getProgramingLanguage()));
+            ProgramingLanguageDto programingLanguageDto = new ProgramingLanguageDto();
+            programingLanguageDto.setId(publication.getProgramingLanguage().getId());
+            programingLanguageDto.setName(publication.getProgramingLanguage().getName());
+            publicationDto.setProgramingLanguage(programingLanguageDto);
         }
 
         if(publication.getCategory()!=null){
-            publicationDto.setCategory(Category.fromValue(publication.getCategory()));
+            CategoryDto categoryDto = new CategoryDto();
+            categoryDto.setId(publication.getCategory().getId());
+            categoryDto.setName(publication.getCategory().getName());
+            publicationDto.setCategory(categoryDto);
         }
 
         if(publication.getComponents()!=null &&
@@ -50,6 +58,10 @@ public class PublicationMapper {
             publicationDto.setTags(tagsDto);
         }
 
+        publicationDto.setUpvotesAmount(publication.getUpvotesAmount());
+        publicationDto.setDownvotesAmount(publication.getDownvotesAmount());
+
+        publicationDto.setAuthorName(publication.getUser().getUsername());
         return publicationDto;
     }
 
@@ -58,8 +70,17 @@ public class PublicationMapper {
 
         publication.setTitle(createPublicationDto.getTitle());
         publication.setDescription(createPublicationDto.getDescription());
-        publication.setProgramingLanguage(createPublicationDto.getProgramingLanguage().name());
-        publication.setCategory(createPublicationDto.getCategory().getValue());
+        if(createPublicationDto.getProgramingLanguageId()!=null){
+            ProgramingLanguage programingLanguage = new ProgramingLanguage();
+            programingLanguage.setId(createPublicationDto.getProgramingLanguageId());
+            publication.setProgramingLanguage(programingLanguage);
+        }
+
+        if(createPublicationDto.getCategoryId()!=null){
+            Category category = new Category();
+            category.setId(createPublicationDto.getCategoryId());
+            publication.setCategory(category);
+        }
 
         if(createPublicationDto.getComponents()!=null) {
             publication.setComponents(createPublicationDto.getComponents()
@@ -85,8 +106,18 @@ public class PublicationMapper {
 
         publication.setTitle(updatePublicationDto.getTitle());
         publication.setDescription(updatePublicationDto.getDescription());
-        publication.setProgramingLanguage(updatePublicationDto.getProgramingLanguage().name());
-        publication.setCategory(updatePublicationDto.getCategory().getValue());
+
+        if(updatePublicationDto.getProgramingLanguageId()!=null){
+            ProgramingLanguage programingLanguage = new ProgramingLanguage();
+            programingLanguage.setId(updatePublicationDto.getProgramingLanguageId());
+            publication.setProgramingLanguage(programingLanguage);
+        }
+
+        if(updatePublicationDto.getCategoryId()!=null){
+            Category category = new Category();
+            category.setId(updatePublicationDto.getCategoryId());
+            publication.setCategory(category);
+        }
 
         if(updatePublicationDto.getComponents()!=null) {
             publication.setComponents(updatePublicationDto.getComponents()

@@ -21,13 +21,18 @@ public class AuthenticationService{
 
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
+    private final UserRepository userRepository;
 
     public TokenDto signin(LoginDto loginDto) {
         var email = loginDto.getEmail();
         var password = loginDto.getPassword();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
+        Optional<User> user = userRepository.getByEmail(email);
         TokenDto tokenDto = new TokenDto();
+        if(user.isPresent()) {
+            tokenDto.setUsername(user.get().getUsername());
+        }
         tokenDto.setToken(tokenService.generateToken(email));
 
         return tokenDto;

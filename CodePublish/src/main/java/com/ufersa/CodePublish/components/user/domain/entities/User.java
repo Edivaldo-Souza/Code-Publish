@@ -23,6 +23,8 @@ public class User implements UserDetails{
     private String role;
     private String email;
     private String password;
+    private Integer publicationAmount;
+    private Integer ratingAmount;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

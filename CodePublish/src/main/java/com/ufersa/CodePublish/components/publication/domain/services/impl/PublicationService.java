@@ -1,7 +1,11 @@
 package com.ufersa.CodePublish.components.publication.domain.services.impl;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.ufersa.CodePublish.commons.domain.entities.Category;
+import com.ufersa.CodePublish.commons.domain.entities.ProgramingLanguage;
 import com.ufersa.CodePublish.commons.domain.entities.Tag;
+import com.ufersa.CodePublish.commons.domain.repositories.CategoryRepository;
+import com.ufersa.CodePublish.commons.domain.repositories.ProgramingLanguageRepository;
 import com.ufersa.CodePublish.commons.domain.repositories.TagRepository;
 import com.ufersa.CodePublish.components.authentication.domain.services.TokenService;
 import com.ufersa.CodePublish.components.files.domain.services.impl.FileService;
@@ -32,6 +36,8 @@ public class PublicationService implements PublicationServiceInterface {
     private final FileService fileService;
     private final PublicationComponentRepository publicationComponentRepository;
     private final TagRepository tagRepository;
+    private final CategoryRepository categoryRepository;
+    private final ProgramingLanguageRepository programingLanguageRepository;
 
 
     @Override
@@ -109,7 +115,28 @@ public class PublicationService implements PublicationServiceInterface {
             publication.setTags(tags);
         }
 
+        if(publication.getCategory().getId()==null){
+            throw new Exception("No mínimo uma categoria precisa ser informada");
+        }
+        Optional<Category> category = categoryRepository.findById(publication.getCategory().getId());
+        if(category.isPresent()) publication.setCategory(category.get());
+
+        if(publication.getProgramingLanguage().getId()==null){
+            throw new Exception("No mínimo uma linguagem de programação precisa ser informada");
+        }
+
+        Optional<ProgramingLanguage> programingLanguage = programingLanguageRepository.findById(
+                publication.getProgramingLanguage().getId()
+        );
+        if(programingLanguage.isPresent()) publication.setProgramingLanguage(programingLanguage.get());
+
         publication.setUser(user.get());
+
+        user.get().setPublicationAmount(user.get().getPublicationAmount()+1);
+        userRepository.save(user.get());
+
+        publication.setDownvotesAmount(0);
+        publication.setUpvotesAmount(0);
 
         return publicationRepository.save(publication);
     }
@@ -122,7 +149,7 @@ public class PublicationService implements PublicationServiceInterface {
             throw new Exception("Não foi encontrar a publicação");
         }
 
-        DecodedJWT jwt = tokenService.decodeToken(token.substring(7));
+        DecodedJWT jwt = tokenService.decodeToken(token);
         Optional<User> user = userRepository.getByEmail(jwt.getSubject());
 
         if (user.isEmpty()) {
@@ -157,7 +184,16 @@ public class PublicationService implements PublicationServiceInterface {
 
         if(publication.getComponents()!=null){
             for(PublicationComponent component : publication.getComponents()){
-                if(component.getFile()==null){
+                if(component.getId()==null){
+                    if(component.getFileId()==null || !files.containsKey(component.getFileId())){
+                        throw new Exception("É preciso que um arquivo esteja associado ao componente" +
+                                "sendo atualizado");
+                    }
+
+                    MultipartFile currentFile = files.get(component.getFileId());
+                    component.setFile(fileService.create(currentFile));
+                }
+                else if(component.getFile()==null){
 
                     if(component.getFileId()==null || !files.containsKey(component.getFileId())){
                         throw new Exception("É preciso que um arquivo esteja associado ao componente" +
@@ -181,7 +217,25 @@ public class PublicationService implements PublicationServiceInterface {
             publication.setComponents(updatedComponents);
         }
 
+        if(publication.getCategory().getId()==null){
+            throw new Exception("No mínimo uma categoria precisa ser informada");
+        }
+        Optional<Category> category = categoryRepository.findById(publication.getCategory().getId());
+        if(category.isPresent()) publication.setCategory(category.get());
+
+        if(publication.getProgramingLanguage().getId()==null){
+            throw new Exception("No mínimo uma linguagem de programação precisa ser informada");
+        }
+
+        Optional<ProgramingLanguage> programingLanguage = programingLanguageRepository.findById(
+                publication.getProgramingLanguage().getId()
+        );
+        if(programingLanguage.isPresent()) publication.setProgramingLanguage(programingLanguage.get());
+
         publication.setUser(user.get());
+
+        publication.setUpvotesAmount(currentPublication.get().getUpvotesAmount());
+        publication.setDownvotesAmount(currentPublication.get().getDownvotesAmount());
 
         return publicationRepository.save(publication);
     }
@@ -202,6 +256,40 @@ public class PublicationService implements PublicationServiceInterface {
             }
         }
 
+        User user = publication.get().getUser();
+        user.setPublicationAmount(user.getPublicationAmount()-1);
+        userRepository.save(user);
+
         publicationRepository.delete(publication.get());
+    }
+
+    public void setRating(Long id, Boolean isPositive, String token) throws Exception {
+        Optional<Publication> currentPublication = publicationRepository.findById(id);
+        if (currentPublication.isEmpty()) {
+            throw new Exception("Não foi encontrar a publicação");
+        }
+
+        DecodedJWT jwt = tokenService.decodeToken(token);
+        Optional<User> user = userRepository.getByEmail(jwt.getSubject());
+
+        if (user.isEmpty()) {
+            throw new Exception("Não foi possível encontrar o usuário que tentou" +
+                    "criar a publicação");
+        }
+
+        if(Objects.equals(user.get().getId(), currentPublication.get().getUser().getId())){
+            throw new Exception("O usuário não pode avaliar sua própria publicação");
+        }
+
+        if(isPositive){
+            int currentUpvotes = currentPublication.get().getUpvotesAmount();
+            currentPublication.get().setUpvotesAmount(currentUpvotes + 1);
+        }
+        else{
+            int currentDownvotes = currentPublication.get().getDownvotesAmount();
+            currentPublication.get().setDownvotesAmount(currentDownvotes + 1);
+        }
+
+        publicationRepository.save(currentPublication.get());
     }
 }

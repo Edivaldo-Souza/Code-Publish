@@ -12,11 +12,13 @@ public interface PublicationRepository extends JpaRepository<Publication,Long> {
        SELECT DISTINCT p FROM Publication p
        LEFT JOIN p.components c
        LEFT JOIN p.tags t
+       LEFT JOIN p.programingLanguage pl
+       LEFT JOIN p.category ct
        WHERE p.id>0 AND
        (LOWER(p.title) LIKE LOWER(CONCAT('%', :q, '%')) OR
        LOWER(p.description) LIKE LOWER(CONCAT('%', :q, '%')) OR
-       LOWER(p.programingLanguage) LIKE LOWER(CONCAT('%', :q, '%')) OR
-       LOWER(c.description) LIKE LOWER(CONCAT('%', :q, '%')) OR
+       LOWER(pl.name) LIKE LOWER(CONCAT('%', :q, '%')) OR
+       LOWER(ct.name) LIKE LOWER(CONCAT('%', :q, '%')) OR
        LOWER(t.name) LIKE LOWER(CONCAT('%', :q, '%')))
 """)
     Page<Publication> findByText(String q, Pageable pageable);

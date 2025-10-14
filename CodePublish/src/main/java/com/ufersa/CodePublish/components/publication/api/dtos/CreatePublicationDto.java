@@ -1,9 +1,7 @@
 package com.ufersa.CodePublish.components.publication.api.dtos;
 
 import com.ufersa.CodePublish.commons.api.dtos.TagDto;
-import com.ufersa.CodePublish.components.publication.domain.entities.Category;
 import com.ufersa.CodePublish.components.publication.domain.entities.ProgramingLanguages;
-import com.ufersa.CodePublish.components.publication.domain.entities.PublicationComponent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -23,14 +21,14 @@ public class CreatePublicationDto {
     @NotBlank(message = "A descrição é obrigatória")
     private String description;
 
-    @NotNull(message = "No mínimo uma linguagem de programação precisar ser informada")
-    private ProgramingLanguages programingLanguage;
-
     @NotNull(message = "No mínimo um arquivo precisa ser informado")
     private List<PublicationComponentDto> components;
 
     @NotNull(message = "A categoria precisa ser informada")
-    private Category category;
+    private Long categoryId;
+
+    @NotNull(message = "No mínimo uma linguagem de programação precisar ser informada")
+    private Long programingLanguageId;
 
     private Set<TagDto> tags;
 }

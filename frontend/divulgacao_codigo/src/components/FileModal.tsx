@@ -1,0 +1,158 @@
+
+import React, { useState,useEffect } from "react"
+import { AttachedFile,FileApi } from "@/types/publication"
+
+interface ModalProps{
+    isOpen: boolean,
+    onClose: () => void,
+    onSave: (data: Omit<AttachedFile, 'id'>) => void,
+    editingFile?: AttachedFile
+}
+
+export default function FileModal({isOpen,onClose,onSave,editingFile}:ModalProps){
+    const [description,setDescription] = useState<string>('');
+    const [file,setFile] = useState<File|null>(null);
+    const [fileApi,setFileApi] = useState<FileApi|null>(null)
+    const [filePreview,setFilePreview] = useState<string|null>(null);
+    const [isLoading,setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && editingFile?.fileResource) {
+      if (editingFile) {
+        setDescription(editingFile.description);
+        setFilePreview(editingFile.previewContent);
+        setFile(editingFile.fileResource);
+        setFileApi(editingFile.file);
+      } else {
+        setDescription('');
+        setFilePreview(null);
+        setFile(null);
+      }
+    }
+  }, [isOpen,editingFile]);
+
+    if(!isOpen) return null;
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = event.target.files?.[0]; 
+
+        if(!selectedFile){
+          setFile(null);
+          setFilePreview(null);
+          return;
+        }
+
+        setFile(selectedFile);
+        setIsLoading(true);
+        /**if(selectedFile.type.startsWith('image/')){
+          const reader = new FileReader();
+          reader.onload = () =>{
+            setFilePreview(reader.result as string)
+          }
+          reader.readAsDataURL(selectedFile)
+        }**/
+        if(selectedFile.type.startsWith('text/') || selectedFile.type.startsWith('application/') )
+        {
+          const reader = new FileReader()
+          reader.onload = (e) =>{
+            const text= e.target?.result
+            setFilePreview(typeof text==='string' ? text : 'Não foi possível ler o conteúdo do arquivo')
+            setIsLoading(false)
+          }
+          reader.onerror = () =>{
+            setFilePreview("Erro ao tentar ler o arquivo");
+            setIsLoading(false);
+          }
+
+          reader.readAsText(selectedFile,'UTF-8');
+        } else{
+          setFilePreview(`Pré-visualização não disponível para arquivos do tipo ${file?.text}`)
+          setIsLoading(false);
+        }
+    }
+
+    const handleSave = () =>{
+      if(file && filePreview){
+        onSave({
+          file:fileApi,
+          fileResource:file,
+          description:description,
+          previewContent: filePreview
+        })
+        setDescription('');
+        setFile(null);
+        setFilePreview(null);
+      }
+    }
+
+    
+    const handleCancel = () =>{
+        onClose();
+        setDescription('');
+        setFile(null);
+        setFilePreview(null);
+    }
+
+    const previewContainerClasses = `bg-gray-800 text-white rounded-md p-4 min-h-[200px] overflow-auto text-sm
+    ${!filePreview || isLoading ? 'flex items-center justify-center' : ''}`
+
+    return(
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl transform transition-all duration-300 scale-100">
+        
+        <label className="flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-t-lg cursor-pointer transition-colors">
+          <input type="file" className="hidden" onChange={handleFileChange} />
+          Selecionar arquivo
+        </label>
+
+        <div className="p-6 space-y-6">
+          { filePreview ? (
+            <div className='bg-gray-800 text-white rounded-md p-4 min-h-[200px] max-h-[200px] overflow-auto text-sm'>
+              <pre className="whitespace-pre-wrap text-left w-full text-indigo-200">
+                  <code>{filePreview}</code>
+                </pre>
+            </div>
+          ) : null}
+
+          {/**<div className='bg-gray-800 text-white rounded-md p-4 min-h-[200px] max-h-[200px] overflow-auto text-sm'>
+            {isLoading ? (
+              <span className="text-gray-400">Carregando pré-visualização...</span>
+            ) : filePreview ? (
+                <pre className="whitespace-pre-wrap text-left w-full text-indigo-200">
+                  <code>{filePreview}</code>
+                </pre>
+            ) : (
+              <span className="text-gray-400">Nenhum arquivo selecionado para pré-visualização</span>
+            )}
+          </div>
+**/}
+
+          <textarea
+            placeholder="Descrição geral"
+            rows={4}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full px-4 py-3 text-black rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-400"
+          ></textarea>
+
+          <div className="flex justify-center gap-4">
+            <button
+              type="button"
+              onClick={handleSave}
+              className="px-8 py-3 font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors"
+            >
+              Salvar
+            </button>
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="px-8 py-3 font-semibold text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    )
+}

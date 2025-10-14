@@ -1,120 +1,101 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, FormEvent } from 'react';
 import api from '@/lib/api';
 import type { NextPage } from 'next';
 import Logout from '@/components/logout';
 import Link from 'next/link';
-import { FaUserCircle, FaPlus } from 'react-icons/fa';
+import { FaUserCircle, FaPlus, FaSearch } from 'react-icons/fa';
 import LoadingSpinner from '@/components/loadindSpinner';
+import toast from 'react-hot-toast';
+import { UserDto } from '@/types/user';
 
-interface UserData {
-  id: string,
-  username: string;
-  email: string;
-}
 
 const ITEMS_PER_PAGE = 5;
 
 const HomePage:NextPage = () =>{
-  const[publications,setPublications] = useState<UserData[]>([])
-  const[isLoading,setIsLoading] = useState(true)
   const[isProfileMenuOpen,setIsProfileMenuOpen] = useState(false)
-  const[error,setError] = useState<string | null>(null)
-
+  const[user,setUser] = useState<UserDto>()
 
   const toggleProfileMenu = () =>{
     setIsProfileMenuOpen(!isProfileMenuOpen);
   }
 
-  const handleLogout = () =>{
-    setIsProfileMenuOpen(false)
-  }
-
   useEffect(()=>{
-    const fetchPublications = async () =>{
-      try{
-        const response = await api.get("v1/users")
 
-        setPublications(response.data.data)
-      } catch(error: any){
-        setError(error)
-      } finally{
-        setIsLoading(false)
-      }
+    const getCurrentUser = async() =>{
+      const userDto = await api.get("v1/users/current");
+      if(userDto) {
+        const userProfile:UserDto = userDto.data.data
+        setUser(userProfile)
+      };
     }
-
-    fetchPublications()
+    getCurrentUser();
   },[])
 
-    if(isLoading){
-      return(<div className="text-center p-10"><LoadingSpinner/>Carregando publicações</div>)
-    }
-
-    if (error) {
-      return <div className="text-center p-10 text-red-600">Erro: {error}</div>;
-    }
 
     return (
     <div className="min-h-screen bg-gray-100">
-      {/* Barra de Navegação */}
-      <nav className="bg-indigo-600 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex-shrink-0">
-              <input placeholder='Pesquisar...'/>
-            </div>
-            <div className="relative">
-              <button
-                onClick={toggleProfileMenu}
-                className="p-2 rounded-full text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                <FaUserCircle size={28} />
-              </button>
-              {isProfileMenuOpen && (
-                <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-10">
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Editar dados pessoais
-                  </a>
-                  <Logout>
-                  </Logout>
-                </div>
-              )}
-            </div>
+      <header className="bg-indigo-600  shadow-sm">
+        <div className="container mx-auto px-6 py-4 flex justify-end items-center">
+          <nav className="flex items-center space-x-2" >
+
+          </nav>
+          <p className='mr-4'>{user?.username}</p>
+          <div className="p-2.5 bg-purple-100 rounded-full cursor-pointer">
+            <button 
+              onClick={toggleProfileMenu}
+              className="p-1 rounded-full text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              <FaUserCircle className="h-6 w-6 text-purple-600" />
+            </button>
+            {isProfileMenuOpen && (
+                            <div className="origin-top-right absolute right-2 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-10">
+                              <a
+                                href="#"
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              >
+                                Editar dados pessoais
+                              </a>
+                              <Logout>
+                              </Logout>
+                            </div>
+                          )}
           </div>
         </div>
-      </nav>
+      </header>
 
-      {/* Conteúdo Principal */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-semibold text-gray-900">Lista de Entidades</h1>
-            <Link href="/publication/register" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                <FaPlus className="mr-2" />
-                Criar Nova Entidade
-            </Link>
+      <main className="container mx-auto px-6 py-12">
+        {/* Seção de Estatísticas */}
+        <section className="flex flex-col md:flex-row md:space-x-12 mb-12">
+          <div className="mb-8 md:mb-0">
+            <p className="text-gray-500 text-lg">Código compartilhados:</p>
+            <h1 className="text-6xl font-bold text-gray-800">{user?.totalPublications}</h1>
           </div>
+          <div>
+            <p className="text-gray-500 text-lg">Total de avaliações:</p>
+            <h1 className="text-6xl font-bold text-gray-800">{user?.totalRatings}</h1>
+          </div>
+        </section>
 
-          <div  className="flex flex-col gap-4">
-            {publications.map((user) => (
-              <div key={user.id} className="bg-white overflow-hidden shadow rounded-lg p-4 flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900">{user.username}</h3>
-                  <p className="mt-2 text-sm text-gray-500">{user.email}</p>
-                </div>
-                <div className="mt-4 flex-shrink-0">
-                  <Link href={`/entidade/${user.id}`} className="text-indigo-600 hover:text-indigo-900 font-semibold">
-                  Ver mais
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <Link className="bg-white p-8 h-56 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col items-center justify-center space-y-4 cursor-pointer"
+              href="/publication/register">
+
+            <span className="text-lg font-medium text-gray-700">Criar publicação</span>
+            <FaPlus className="h-5 w-5 text-black" />
+          </Link>
+
+          <button className="bg-white p-8 h-56 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col items-center justify-center space-y-4 cursor-pointer">
+            <span className="text-lg font-medium text-gray-700">Ver publicações</span>
+            <FaSearch className="h-5 w-5 text-black" />
+          </button>
+
+          <Link className="bg-white p-8 h-56 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col items-center justify-center space-y-4 cursor-pointer"
+            href={"/publication/search"}>
+            <span className="text-lg font-medium text-gray-700">Ver minhas publicações</span>
+            <FaSearch className="h-5 w-5 text-black" />
+          </Link>
+        </section>
       </main>
     </div>
   );

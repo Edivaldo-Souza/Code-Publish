@@ -1,5 +1,6 @@
 import api from "@/lib/api";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 
 export default function Logout(){
@@ -13,7 +14,7 @@ export default function Logout(){
             router.push('/login');
         
         } catch (error) {
-            console.error('Falha ao fazer logout', error);
+            toast.error(`Erro ao realizar o login ${error}`)    
         }
     };
 

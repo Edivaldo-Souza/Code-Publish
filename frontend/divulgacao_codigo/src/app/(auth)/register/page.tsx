@@ -1,12 +1,11 @@
-// src/app/(auth)/cadastro/page.tsx
 
-"use client"; // Marca este como um Componente de Cliente
+"use client";
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, ChangeEvent, FormEvent } from 'react';
+import toast from 'react-hot-toast';
 
-// Definindo o tipo para nosso estado do formulário
 interface FormData {
   nome: string;
   email: string;
@@ -28,7 +27,6 @@ export default function PaginaCadastro() {
   const [erros, setErros] = useState<Partial<FormData>>({});
   const [apiError,setApiError] = useState<string | null>(null);
 
-  // Função para lidar com mudanças nos inputs
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -37,9 +35,8 @@ export default function PaginaCadastro() {
     }));
   };
 
-  // Função para lidar com o envio do formulário
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Impede o recarregamento da página
+    e.preventDefault();
     const novosErros: Partial<FormData> = {};
 
     // Validações simples
@@ -82,7 +79,7 @@ export default function PaginaCadastro() {
                 throw new Error(data.message || "Não foi possível cadastrar o usuário")
             }
 
-            console.log('Usuario cadastrado: ',data)
+            toast.success("Usuário cadastrado com sucesso!")
             router.push("/login")
 
         }

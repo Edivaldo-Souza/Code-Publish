@@ -1,5 +1,7 @@
 package com.ufersa.CodePublish.components.publication.domain.entities;
 
+import com.ufersa.CodePublish.commons.domain.entities.Category;
+import com.ufersa.CodePublish.commons.domain.entities.ProgramingLanguage;
 import com.ufersa.CodePublish.commons.domain.entities.Tag;
 import com.ufersa.CodePublish.components.user.domain.entities.User;
 import jakarta.persistence.*;
@@ -17,13 +19,15 @@ public class Publication {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    private String programingLanguage;
     private String description;
+
+    private Integer upvotesAmount;
+    private Integer downvotesAmount;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
+ 
     @OneToMany(mappedBy = "publication", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PublicationComponent> components;
 
@@ -35,5 +39,11 @@ public class Publication {
     )
     private Set<Tag> tags = new HashSet<>();
 
-    private String category;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "programing_language_id")
+    private ProgramingLanguage programingLanguage;
 }

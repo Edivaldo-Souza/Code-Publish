@@ -16,7 +16,7 @@ export function middleware(request: NextRequest){
         return NextResponse.redirect(loginUrl)
     }
 
-    if(cookie && publicRoutes.includes(pathname) && pathname!=='/register'){
+    if(cookie && pathname==='/login'){
         return NextResponse.redirect(new URL('/home',request.url))
     }
 

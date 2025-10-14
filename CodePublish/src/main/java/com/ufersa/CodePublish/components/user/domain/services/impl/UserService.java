@@ -1,5 +1,7 @@
 package com.ufersa.CodePublish.components.user.domain.services.impl;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.ufersa.CodePublish.components.authentication.domain.services.TokenService;
 import com.ufersa.CodePublish.components.user.domain.entities.User;
 import com.ufersa.CodePublish.components.user.domain.entities.UserType;
 import com.ufersa.CodePublish.components.user.domain.repositories.UserRepository;
@@ -17,6 +19,7 @@ public class UserService implements UserServiceInterface {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
     @Override
     public User getById(Long id) throws Exception {
@@ -56,6 +59,9 @@ public class UserService implements UserServiceInterface {
         String newPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(newPassword);
 
+        user.setPublicationAmount(0);
+        user.setRatingAmount(0);
+
         return userRepository.save(user);
     }
 
@@ -73,6 +79,12 @@ public class UserService implements UserServiceInterface {
             throw new Exception("Usuário com o email: "+user.getEmail()+" já existente");
         }
 
+        Optional<User> currentUser = userRepository.findById(id);
+        if (currentUser.isPresent()) {
+            user.setRatingAmount(currentUser.get().getRatingAmount());
+            user.setPublicationAmount(currentUser.get().getPublicationAmount());
+        }
+
         return userRepository.save(user);
     }
 
@@ -85,4 +97,13 @@ public class UserService implements UserServiceInterface {
         userRepository.delete(user.get());
     }
 
+    public User getCurrentUser(String token){
+        DecodedJWT jwt = tokenService.decodeToken(token);
+        Optional<User> user = userRepository.getByEmail(jwt.getSubject());
+
+        if(user.isPresent()) {
+            return user.get();
+        }
+        return null;
+    }
 }

@@ -58,12 +58,15 @@ public class PublicationController {
     @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<ApiResponse<PublicationDto>> put(
             @PathVariable("id") Long id,
-            @RequestPart("data") UpdatePublicationDto updatePublicationDto,
+            @RequestPart("data") String updatePublicationDtoJson,
             MultipartHttpServletRequest multipartRequest,
-            @RequestHeader("Authorization") String token,
+            @CookieValue("accessToken") String token,
             HttpServletRequest request
     ) throws Exception {
         Map<String,MultipartFile> files = multipartRequest.getFileMap();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        UpdatePublicationDto updatePublicationDto = objectMapper.readValue(updatePublicationDtoJson,UpdatePublicationDto.class);
 
         Publication newPublication = publicationService.update(
                 id,
@@ -123,6 +126,20 @@ public class PublicationController {
         ApiResponse<Void> response =
                 ResponseUtil.success(null,"Publicação deletada",request.getRequestURI());
 
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping("/rating/{id}")
+    public ResponseEntity<ApiResponse<Void>> upvote(
+        @PathVariable("id") Long id,
+        @RequestParam("positive") Boolean isPositive,
+        @CookieValue("accessToken") String token,
+        HttpServletRequest request
+    ) throws Exception {
+        publicationService.setRating(id,isPositive,token);
+
+         ApiResponse<Void> response = ResponseUtil
+                 .success(null,"Avaliação submetida",request.getRequestURI());
         return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
 }
