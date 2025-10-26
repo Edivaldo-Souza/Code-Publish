@@ -1,22 +1,29 @@
 services:
   db_container:
     container_name: db_container
+    profiles: [prod]
     image: postgres:alpine
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: codepublish
+    volumes:
+      - ./db_container:/var/lib/postgresql/data
 
   backend_container:
     container_name: backend_container
+    profiles: [prod]
     build: CodePublish/.
     depends_on: 
       - db_container
+    volumes:
+      - ./uploads:/uploads
     ports:
       - 8080:8080
 
   frontend_container:
     container_name: frontend_container
+    profiles: [prod]
     build: frontend/divulgacao_codigo/.
     ports:
       - 3000:3000

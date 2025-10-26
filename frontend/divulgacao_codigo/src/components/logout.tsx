@@ -1,6 +1,7 @@
 "use client"
 
 import api from "@/lib/api";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -17,7 +18,9 @@ export default function Logout(){
             router.push('/');
         
         } catch (error) {
-            toast.error(`Erro ao realizar o login ${error}`)    
+            if(axios.isAxiosError(error)){
+                toast.error(`Erro ao realizar o login ${error.response?.data.error}`) 
+            }   
         }
     };
 
