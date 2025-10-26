@@ -37,7 +37,6 @@ export function ContentBlockView({attachedFile}:ContentBlockViewProps){
             </pre>
           </div>
         
-        {/* Botões de Ação */}
         <div className="absolute top-3 right-3 flex items-center gap-2">
           <button onClick={handleCopy} className="p-2 rounded-md bg-indigo-600 hover:bg-gray-600 transition-colors">
             {copied ? <CheckIcon /> : <CopyIcon />}

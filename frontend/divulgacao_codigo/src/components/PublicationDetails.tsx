@@ -175,15 +175,12 @@ export default function PublicationDetails({publicationId,redirect_to}:Publicati
           </section>
         : 
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 sm:p-12 flex flex-col items-center justify-center text-center">
-            {/* O ícone 'X' da imagem é bem grosso, stroke-[3] ou [4] simula isso */}
             <FaX className="text-red-500 w-24 h-24 stroke-[20]" />
 
             <h3 className="mt-6 text-xl sm:text-2xl font-semibold text-gray-800 max-w-md">
               Realize o login na plataforma para ter acesso aos arquivos da
               publicação
             </h3>
-
-            {/* Botão Entrar */}
             <button
               onClick={handleLogin}
               className="mt-8 px-6 py-3 bg-indigo-600 text-white text-lg font-medium rounded-lg shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition duration-150 ease-in-out"
@@ -193,7 +190,6 @@ export default function PublicationDetails({publicationId,redirect_to}:Publicati
           </div>
         }
         
-        {/* Botão de Voltar */}
         <footer className="mt-12 text-center">
           <button 
             type="button"

@@ -10,6 +10,7 @@ export function mapApiResponseToPublication(apiData: PublicationApi): Publicatio
         description: apiData.description,
         upvotesAmount: apiData.upvotesAmount,
         downvotesAmount: apiData.downvotesAmount,
+        authorName: apiData.authorName,
         components: apiData.components.map(component => {
             return{
                 id:component.id,

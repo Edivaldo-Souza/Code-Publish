@@ -1,5 +1,4 @@
 import SearchPublications from "@/components/SearchPublications";
-import { Suspense } from "react";
 
 interface PublicationSearchProps{
   params: Promise<{
