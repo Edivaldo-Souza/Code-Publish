@@ -29,9 +29,17 @@ export default function LoginPage() {
 
     localStorage.setItem("code_publish_username",currentUser.data.data.username)
     const redirectTo = searchParams.get('redirect_to');
+    
     toast.success("Login efetuado com sucesso!")
-    router.push( redirectTo || '/home');
+    
+    if(redirectTo?.includes("details")){
+      const url = `${redirectTo}?redirect_to=/login`
 
+      router.push(url)
+    }else{
+      router.push( redirectTo || '/home');
+    }
+    
   } catch (err: any) {
     if (err.response && err.response.status === 401) {
       setError('Credenciais inválidas.');
@@ -73,10 +81,18 @@ export default function LoginPage() {
           />
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit" disabled={isLoading} 
+        
+        <div className="space-y-3">
+          <button type="submit" disabled={isLoading} 
         className="w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
           {isLoading ? 'Entrando...' : 'Entrar'}
         </button>
+        <button type="button"
+        onClick={()=>router.back()}
+        className="w-full px-4 py-2 text-sm font-medium text-indigo-600 bg-white border border-indigo-600 rounded-md shadow-sm hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          Voltar
+        </button>
+        </div>
       </form>
       <div className='flex text-black justify-center items-center'>
         <p>Não possuí uma conta?</p>

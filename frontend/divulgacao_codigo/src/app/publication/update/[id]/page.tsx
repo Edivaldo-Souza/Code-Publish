@@ -1,9 +1,14 @@
 
 import PublicationForm from "@/components/Publication";
 
-export default async function PublicationEdit({params}:{params:{id:string}}){
-    
+interface PublicationEditProps{
+    params:Promise<{id:string}>
+}
+
+export default async function PublicationEdit({params}:PublicationEditProps){
+    const {id} = await params
+
     return (
-        <PublicationForm editingPublicationId={params.id}/>
+        <PublicationForm editingPublicationId={id}/>
     )
 }

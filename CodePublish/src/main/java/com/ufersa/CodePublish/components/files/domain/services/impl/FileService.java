@@ -71,6 +71,7 @@ public class FileService implements FileServiceInterface {
             catch (IOException e) {
                 e.printStackTrace();
             }
+            fileName = null;
             fileRepository.delete(file.get());
         }
     }

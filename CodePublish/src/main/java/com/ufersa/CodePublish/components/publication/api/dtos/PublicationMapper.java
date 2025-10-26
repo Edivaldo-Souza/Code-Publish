@@ -42,13 +42,15 @@ public class PublicationMapper {
             publicationDto.setCategory(categoryDto);
         }
 
-        if(publication.getComponents()!=null &&
-           Hibernate.isInitialized(publicationDto.getComponents())) {
+        if( Hibernate.isInitialized(publication.getComponents()) &&
+            publication.getComponents()!=null
+           ) {
             publicationDto.setComponents(publication.getComponents()
                .stream().map(publicationComponentMapper::publicationComponentToDto).toList());
         }
 
-        if(publication.getTags()!=null){
+        if(Hibernate.isInitialized(publication.getTags()) &&
+           publication.getTags()!=null){
             Set<TagDto> tagsDto = new HashSet<>();
             for(Tag tag : publication.getTags()) {
                 TagDto tagDto = new TagDto();

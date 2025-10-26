@@ -1,8 +1,14 @@
 import PublicationDetails from "@/components/PublicationDetails"
 
-export default function PublicationView({params}:{params:{id:string}}){
-    
+interface PublicationViewProps{
+    params: Promise<{id:string}>
+    searchParams: Promise<{redirect_to?:string}>
+}
+
+export default async function PublicationView({params,searchParams}:PublicationViewProps){
+    const {id} = await params
+    const {redirect_to} = await searchParams
     return(
-        <PublicationDetails publicationId={params.id}/>
+        <PublicationDetails publicationId={id} redirect_to={redirect_to}/>
     )
 }

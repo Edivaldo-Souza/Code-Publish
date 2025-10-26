@@ -11,8 +11,11 @@ import com.ufersa.CodePublish.components.authentication.domain.services.TokenSer
 import com.ufersa.CodePublish.components.files.domain.services.impl.FileService;
 import com.ufersa.CodePublish.components.publication.domain.entities.Publication;
 import com.ufersa.CodePublish.components.publication.domain.entities.PublicationComponent;
+import com.ufersa.CodePublish.components.publication.domain.entities.PublicationUserRating;
+import com.ufersa.CodePublish.components.publication.domain.entities.RatingId;
 import com.ufersa.CodePublish.components.publication.domain.repositories.PublicationComponentRepository;
 import com.ufersa.CodePublish.components.publication.domain.repositories.PublicationRepository;
+import com.ufersa.CodePublish.components.publication.domain.repositories.PublicationUserRatingRepository;
 import com.ufersa.CodePublish.components.publication.domain.services.PublicationServiceInterface;
 import com.ufersa.CodePublish.components.user.domain.entities.User;
 import com.ufersa.CodePublish.components.user.domain.repositories.UserRepository;
@@ -38,11 +41,13 @@ public class PublicationService implements PublicationServiceInterface {
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
     private final ProgramingLanguageRepository programingLanguageRepository;
-
+    private final PublicationUserRatingRepository publicationUserRatingRepository;
 
     @Override
-    public List<Publication> getAll() {
-        return List.of();
+    @Transactional
+    public List<Publication> getAll(String q) {
+        // return publicationRepository.findByText(q);
+        return null;
     }
 
     @Override
@@ -64,17 +69,22 @@ public class PublicationService implements PublicationServiceInterface {
     }
 
     @Transactional
-    public Page<Publication> getPublicationsByQ(String q, Pageable pageable) {
-        Page<Publication> publications = publicationRepository.findByText(q, pageable);
-        publications.forEach(publication -> {
-            if (publication.getComponents() != null) {
-                publication.getComponents().size();
+    public Page<Publication> getPublicationsByQ(
+            String q,
+            Boolean currentUserPublication,
+            String token,
+            Pageable pageable) {
+        if(currentUserPublication){
+            DecodedJWT decodedJWT = tokenService.decodeToken(token);
+            Optional<User> user = userRepository.getByEmail(decodedJWT.getSubject());
+
+            if(user.isPresent()){
+                List<Long> ids = publicationRepository.findIdsWithUser(q,user.get().getId());
+                return publicationRepository.findByTextAndUser(ids,pageable);
             }
-            if (publication.getTags() != null) {
-                publication.getTags().size();
-            }
-        });
-        return publications;
+        }
+        List<Long> ids = publicationRepository.findIds(q);
+        return publicationRepository.findByTextAndUser(ids, pageable);
     }
 
     @Override
@@ -86,6 +96,10 @@ public class PublicationService implements PublicationServiceInterface {
         if (user.isEmpty()) {
             throw new Exception("Não foi possível encontrar o usuário que tentou" +
                     "criar a publicação");
+        }
+
+        if(publication.getComponents()==null || publication.getComponents().isEmpty()){
+            throw new Exception("No mínimo um arquivo precisa ser informado ");
         }
 
         if(publication.getComponents()!=null){
@@ -160,6 +174,10 @@ public class PublicationService implements PublicationServiceInterface {
         if(!Objects.equals(user.get().getId(), currentPublication.get().getUser().getId())){
             throw new Exception("O usuário que está tentando editar a publicação não é o mesmo" +
                     "que a criou");
+        }
+
+        if(publication.getComponents()==null || publication.getComponents().isEmpty()){
+            throw new Exception("No mínimo um arquivo precisa ser informado ");
         }
 
         publication.setId(id);
@@ -252,9 +270,12 @@ public class PublicationService implements PublicationServiceInterface {
         if(publication.get().getComponents()!=null){
             for(PublicationComponent component : publication.get().getComponents()){
                 fileService.delete(component.getFile().getId());
+                component.setFile(null);
                 publicationComponentRepository.delete(component);
             }
         }
+
+        publicationUserRatingRepository.deleteByIdPublicationId(id);
 
         User user = publication.get().getUser();
         user.setPublicationAmount(user.getPublicationAmount()-1);
@@ -263,7 +284,7 @@ public class PublicationService implements PublicationServiceInterface {
         publicationRepository.delete(publication.get());
     }
 
-    public void setRating(Long id, Boolean isPositive, String token) throws Exception {
+    public Boolean setRating(Long id, Boolean isPositive, String token) throws Exception {
         Optional<Publication> currentPublication = publicationRepository.findById(id);
         if (currentPublication.isEmpty()) {
             throw new Exception("Não foi encontrar a publicação");
@@ -281,15 +302,50 @@ public class PublicationService implements PublicationServiceInterface {
             throw new Exception("O usuário não pode avaliar sua própria publicação");
         }
 
-        if(isPositive){
-            int currentUpvotes = currentPublication.get().getUpvotesAmount();
-            currentPublication.get().setUpvotesAmount(currentUpvotes + 1);
-        }
-        else{
-            int currentDownvotes = currentPublication.get().getDownvotesAmount();
-            currentPublication.get().setDownvotesAmount(currentDownvotes + 1);
+        RatingId ratingId = new RatingId();
+        ratingId.setPublicationId(currentPublication.get().getId());
+        ratingId.setUserId(user.get().getId());
+
+        Optional<PublicationUserRating> publicationUserRating = publicationUserRatingRepository.findById(ratingId);
+
+        if(publicationUserRating.isPresent() &&
+           publicationUserRating.get().getPositive().equals(isPositive)){
+            throw new Exception("O usuário só pode fazer uma avaliação por publicação");
         }
 
+        PublicationUserRating rating = new PublicationUserRating();
+        rating.setId(ratingId);
+
+        if(isPositive){
+            if(publicationUserRating.isPresent() && !publicationUserRating.get().getPositive()){
+                currentPublication.get().setDownvotesAmount(currentPublication.get().getDownvotesAmount()-1);
+                publicationUserRating.get().setPositive(true);
+            }
+            int currentUpvotes = currentPublication.get().getUpvotesAmount();
+            currentPublication.get().setUpvotesAmount(currentUpvotes + 1);
+            rating.setPositive(true);
+        }
+        else{
+            if(publicationUserRating.isPresent() && publicationUserRating.get().getPositive()){
+                currentPublication.get().setUpvotesAmount(currentPublication.get().getUpvotesAmount()-1);
+                publicationUserRating.get().setPositive(false);
+            }
+            int currentDownvotes = currentPublication.get().getDownvotesAmount();
+            currentPublication.get().setDownvotesAmount(currentDownvotes + 1);
+            rating.setPositive(false);
+        }
+
+
         publicationRepository.save(currentPublication.get());
+        if(publicationUserRating.isPresent()){
+            publicationUserRatingRepository.save(publicationUserRating.get());
+            return true;
+        }
+        else {
+            user.get().setRatingAmount(user.get().getRatingAmount()+1);
+            userRepository.save(user.get());
+            publicationUserRatingRepository.save(rating);
+            return false;
+        }
     }
 }

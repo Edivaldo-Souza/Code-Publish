@@ -1,6 +1,7 @@
 
 "use client";
 
+import api from '@/lib/api';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, ChangeEvent, FormEvent } from 'react';
@@ -65,26 +66,16 @@ export default function PaginaCadastro() {
                 password: formData.senha
             }
 
-            const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"/v1/users",
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestForm),
-                }
+            const response = await api.post("/v1/users",
+                requestForm
             )
-
-            const data = await response.json();
-
-            if(!response.ok){
-                throw new Error(data.message || "Não foi possível cadastrar o usuário")
-            }
 
             toast.success("Usuário cadastrado com sucesso!")
             router.push("/login")
 
         }
         catch(error: any){
-            setApiError(error);
+            toast.error(`${error.response.data.error}`)
         } finally{
             setIsLoading(false);
         }
@@ -168,10 +159,10 @@ export default function PaginaCadastro() {
             </button>
           </div>
         </form>
-          <Link href='/login'
+          <button onClick={()=>router.back()}
           className="w-full block text-center px-4 py-2 text-sm font-medium text-indigo-600 bg-transparent border rounded-md shadow-sm hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
           Voltar
-          </Link>
+          </button>
       </div>
     </div>
   );

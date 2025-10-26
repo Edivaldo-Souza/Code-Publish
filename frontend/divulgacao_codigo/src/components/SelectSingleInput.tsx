@@ -1,8 +1,10 @@
+"use client"
+
 import api from "@/lib/api";
 import { SingleSelectOption, MetaData } from "@/types/selectables";
-import { useEffect, useState } from "react";
+import { useId,useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import Select, { MultiValue, SingleValue } from "react-select";
+import Select, {SingleValue } from "react-select";
 
 interface SelectSingleInputPros{
     value: SingleSelectOption | null,
@@ -14,12 +16,13 @@ export default function SelectSingleInput({value,onChange,url}:SelectSingleInput
     const [options,setOptions] = useState<SingleSelectOption[]>([])
     const [isLoading,setIsLoading] = useState(true)
     const [typeMetaData,setTypeMetaData] = useState<string>('')
+    const stableId = useId() 
 
     useEffect(()=>{
         if(url.substring(3)==='categories'){
-            setTypeMetaData('Categorias')
+            setTypeMetaData('Categoria')
         }
-        else setTypeMetaData('Linguagens de programação')
+        else setTypeMetaData('Linguagem de programação')
 
         const fetchOptions = async () =>{
             try{
@@ -39,18 +42,22 @@ export default function SelectSingleInput({value,onChange,url}:SelectSingleInput
     },[])
 
     return (
+        <div>
         <Select
             isClearable
+            instanceId={stableId}
             options={options}
             isLoading={isLoading}
             value={value}
             onChange={onChange}
-            placeholder={`Selecione as ${typeMetaData}`}
+            required
+            placeholder={`Selecione a ${typeMetaData}`}
             noOptionsMessage={()=>(`Nenhuma ${typeMetaData} encontrada`)}
             loadingMessage={()=>(`Carregando ${typeMetaData}...`)}
             styles={{
                 menu: (base) => ({ ...base, zIndex: 9999 })
             }}
         />
+        </div>
     )
 }

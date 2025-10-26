@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -86,10 +87,15 @@ public class PublicationController {
     @GetMapping
     public ResponseEntity<ApiResponse<Page<PublicationDto>>> get(
             @RequestParam(required = false) String q,
+            @RequestParam(required = false) Boolean currentUserPublications,
+            @CookieValue(value = "accessToken",required = false) String token,
             HttpServletRequest request,
             Pageable pageable
     ){
-        Page<Publication> publications = publicationService.getPublicationsByQ(q,pageable);
+        Page<Publication> publications = publicationService.getPublicationsByQ(
+                q,
+                currentUserPublications,
+                token,pageable);
 
         Page<PublicationDto> publicationDtos = publications.map(
                 publicationMapper::publicationToPublicationDto
@@ -130,16 +136,18 @@ public class PublicationController {
     }
 
     @PatchMapping("/rating/{id}")
-    public ResponseEntity<ApiResponse<Void>> upvote(
+    public ResponseEntity<ApiResponse<PublicationRatingDto>> upvote(
         @PathVariable("id") Long id,
         @RequestParam("positive") Boolean isPositive,
         @CookieValue("accessToken") String token,
         HttpServletRequest request
     ) throws Exception {
-        publicationService.setRating(id,isPositive,token);
+        Boolean updateVotes = publicationService.setRating(id,isPositive,token);
 
-         ApiResponse<Void> response = ResponseUtil
-                 .success(null,"Avaliação submetida",request.getRequestURI());
-        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        PublicationRatingDto publicationRatingDto = new PublicationRatingDto();
+        publicationRatingDto.setUpdateVotes(updateVotes);
+         ApiResponse<PublicationRatingDto> response = ResponseUtil
+                 .success(publicationRatingDto,"Avaliação submetida",request.getRequestURI());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

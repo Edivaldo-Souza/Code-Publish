@@ -1,6 +1,6 @@
 import api from "@/lib/api";
 import { Tag,SelectOption } from "@/types/selectables";
-import { useEffect, useState } from "react";
+import { useId,useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Select, { MultiValue } from "react-select";
 
@@ -12,6 +12,7 @@ interface SelectMultiInputProps{
 export default function SelectMultiInput({value,onChange}:SelectMultiInputProps){
     const [options,setOptions] = useState<SelectOption[]>([])
     const [isLoading,setIsLoading] = useState(true)
+    const stableId = useId()
 
     useEffect(()=>{
         const fetchOptions = async () =>{
@@ -34,10 +35,12 @@ export default function SelectMultiInput({value,onChange}:SelectMultiInputProps)
     return (
         <Select
             isMulti
+            instanceId={stableId}
             options={options}
             isLoading={isLoading}
             value={value}
             onChange={onChange}
+            required
             placeholder='Selecione as tags'
             noOptionsMessage={()=>("Nenhuma tag encontrada")}
             loadingMessage={()=>("Carregando tags...")}

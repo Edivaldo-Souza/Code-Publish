@@ -1,0 +1,21 @@
+services:
+  db_container:
+    container_name: db_container
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: codepublish
+
+  backend_container:
+    container_name: backend_container
+    build: CodePublish/.
+    depends_on: backend_container
+    ports:
+      8080:8080
+
+  frontend_container:
+    container_name: frontend_container
+    build: frontend/.
+    ports:
+      3000:3000

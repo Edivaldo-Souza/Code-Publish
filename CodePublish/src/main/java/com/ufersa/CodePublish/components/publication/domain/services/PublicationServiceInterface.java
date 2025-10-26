@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface PublicationServiceInterface {
-    List<Publication> getAll();
+    List<Publication> getAll(String q);
     Publication getById(Long id) throws Exception;
     Publication create(Publication publication, String token, Map<String,MultipartFile> files) throws Exception;
     Publication update(Long id,Publication publication, String token, Map<String,MultipartFile> file) throws Exception;

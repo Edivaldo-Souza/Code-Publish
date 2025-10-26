@@ -14,6 +14,7 @@ export default function FileModal({isOpen,onClose,onSave,editingFile}:ModalProps
     const [file,setFile] = useState<File|null>(null);
     const [fileApi,setFileApi] = useState<FileApi|null>(null)
     const [filePreview,setFilePreview] = useState<string|null>(null);
+    const [error,setError] = useState<string|null>(null);
     const [isLoading,setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -37,26 +38,50 @@ export default function FileModal({isOpen,onClose,onSave,editingFile}:ModalProps
         const selectedFile = event.target.files?.[0]; 
 
         if(!selectedFile){
-          setFile(null);
-          setFilePreview(null);
+          //setFile(null);
+          //setFilePreview(null);
           return;
         }
 
         setFile(selectedFile);
         setIsLoading(true);
-        /**if(selectedFile.type.startsWith('image/')){
-          const reader = new FileReader();
-          reader.onload = () =>{
-            setFilePreview(reader.result as string)
-          }
-          reader.readAsDataURL(selectedFile)
-        }**/
-        if(selectedFile.type.startsWith('text/') || selectedFile.type.startsWith('application/') )
-        {
-          const reader = new FileReader()
-          reader.onload = (e) =>{
+
+        const binaryMimeTypes = [
+        'image/',
+        'video/',
+        'audio/',
+        'application/pdf',
+        'application/zip',
+        'application/octet-stream',
+        'application/x-zip-compressed',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+
+        const isBinary = binaryMimeTypes.some(binaryType =>
+          selectedFile.type.startsWith(binaryType)
+        )
+
+        if(isBinary){
+          setError(`O tipo de arquivo não pode ser aceito: ${selectedFile.type}`)
+          event.target.value = '';
+          return
+        }
+
+        if(editingFile){
+          setFileApi(null)
+        }
+        
+        const reader = new FileReader()
+          reader.onload = (e: ProgressEvent<FileReader>) =>{
             const text= e.target?.result
-            setFilePreview(typeof text==='string' ? text : 'Não foi possível ler o conteúdo do arquivo')
+            if(typeof text === "string"){
+              setFilePreview(text)
+            }
+            else{
+              setError("Não foi possível abrir o arquivo")
+            }
             setIsLoading(false)
           }
           reader.onerror = () =>{
@@ -64,15 +89,14 @@ export default function FileModal({isOpen,onClose,onSave,editingFile}:ModalProps
             setIsLoading(false);
           }
 
-          reader.readAsText(selectedFile,'UTF-8');
-        } else{
-          setFilePreview(`Pré-visualização não disponível para arquivos do tipo ${file?.text}`)
-          setIsLoading(false);
-        }
+          reader.readAsText(selectedFile);
     }
 
     const handleSave = () =>{
-      if(file && filePreview){
+      if(description.trim()===""){
+        setError("Defina uma descrição para o arquivo")
+      }
+      else if(file && filePreview){
         onSave({
           file:fileApi,
           fileResource:file,
@@ -82,12 +106,14 @@ export default function FileModal({isOpen,onClose,onSave,editingFile}:ModalProps
         setDescription('');
         setFile(null);
         setFilePreview(null);
+        setError(null)
       }
     }
 
     
     const handleCancel = () =>{
         onClose();
+        setError('')
         setDescription('');
         setFile(null);
         setFilePreview(null);
@@ -113,20 +139,7 @@ export default function FileModal({isOpen,onClose,onSave,editingFile}:ModalProps
                 </pre>
             </div>
           ) : null}
-
-          {/**<div className='bg-gray-800 text-white rounded-md p-4 min-h-[200px] max-h-[200px] overflow-auto text-sm'>
-            {isLoading ? (
-              <span className="text-gray-400">Carregando pré-visualização...</span>
-            ) : filePreview ? (
-                <pre className="whitespace-pre-wrap text-left w-full text-indigo-200">
-                  <code>{filePreview}</code>
-                </pre>
-            ) : (
-              <span className="text-gray-400">Nenhum arquivo selecionado para pré-visualização</span>
-            )}
-          </div>
-**/}
-
+          
           <textarea
             placeholder="Descrição geral"
             rows={4}
@@ -151,6 +164,12 @@ export default function FileModal({isOpen,onClose,onSave,editingFile}:ModalProps
               Cancelar
             </button>
           </div>
+
+          { error ? 
+          <p className="text-red-600">
+            {error}
+          </p> : null
+          }
         </div>
       </div>
     </div>

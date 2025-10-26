@@ -176,14 +176,14 @@ export default function PublicationForm({editingPublicationId}:PublicationProps)
         }
 
         if(response.status!==201 && response.status!==200){
-            console.log(response.data.error)
+            toast.error(response.data.error)
         }
         else{
             toast.success("Dados salvos com sucesso!")
             router.back();
         }
     } catch(error:any){
-        console.log(error)
+        toast.error(`${error.response.data.error}`)
     }
   };
 
@@ -302,7 +302,7 @@ export default function PublicationForm({editingPublicationId}:PublicationProps)
 
           </div>
           <div className="mt-8 flex justify-center gap-4">
-            <button type="submit" className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Salvar</button>
+            <button type="submit" className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition-colors shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Salvar</button>
             <button type="button" onClick={handleBackButton} className="px-6 py-3 font-bold rounded text-indigo-600 bg-transparent border rounded-md shadow-sm hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"> Voltar</button>
           </div>
         </form>

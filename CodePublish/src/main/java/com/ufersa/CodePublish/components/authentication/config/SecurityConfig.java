@@ -47,6 +47,8 @@ public class SecurityConfig {
                                 .permitAll()
                                 .requestMatchers(HttpMethod.POST,"v1/users")
                                 .permitAll()
+                                .requestMatchers(HttpMethod.GET,"v1/publications/**")
+                                .permitAll()
                                 .anyRequest().authenticated())
                 .cors(cors ->{})
                 .build();

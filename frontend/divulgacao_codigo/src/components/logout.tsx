@@ -1,3 +1,5 @@
+"use client"
+
 import api from "@/lib/api";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -10,8 +12,9 @@ export default function Logout(){
         try {
         
             await api.post('/v1/auth/logout');
-            
-            router.push('/login');
+
+            localStorage.removeItem("code_publish_username")
+            router.push('/');
         
         } catch (error) {
             toast.error(`Erro ao realizar o login ${error}`)    

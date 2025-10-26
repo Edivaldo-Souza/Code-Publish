@@ -6,12 +6,7 @@ import type { NextPage } from 'next';
 import Logout from '@/components/logout';
 import Link from 'next/link';
 import { FaUserCircle, FaPlus, FaSearch } from 'react-icons/fa';
-import LoadingSpinner from '@/components/loadindSpinner';
-import toast from 'react-hot-toast';
 import { UserDto } from '@/types/user';
-
-
-const ITEMS_PER_PAGE = 5;
 
 const HomePage:NextPage = () =>{
   const[isProfileMenuOpen,setIsProfileMenuOpen] = useState(false)
@@ -65,7 +60,6 @@ const HomePage:NextPage = () =>{
       </header>
 
       <main className="container mx-auto px-6 py-12">
-        {/* Seção de Estatísticas */}
         <section className="flex flex-col md:flex-row md:space-x-12 mb-12">
           <div className="mb-8 md:mb-0">
             <p className="text-gray-500 text-lg">Código compartilhados:</p>
@@ -85,13 +79,14 @@ const HomePage:NextPage = () =>{
             <FaPlus className="h-5 w-5 text-black" />
           </Link>
 
-          <button className="bg-white p-8 h-56 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col items-center justify-center space-y-4 cursor-pointer">
+          <Link className="bg-white p-8 h-56 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col items-center justify-center space-y-4 cursor-pointer"
+                href={"/publication/search/false/true"}>
             <span className="text-lg font-medium text-gray-700">Ver publicações</span>
             <FaSearch className="h-5 w-5 text-black" />
-          </button>
+          </Link>
 
           <Link className="bg-white p-8 h-56 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col items-center justify-center space-y-4 cursor-pointer"
-            href={"/publication/search"}>
+            href={"/publication/search/true/true"}>
             <span className="text-lg font-medium text-gray-700">Ver minhas publicações</span>
             <FaSearch className="h-5 w-5 text-black" />
           </Link>
