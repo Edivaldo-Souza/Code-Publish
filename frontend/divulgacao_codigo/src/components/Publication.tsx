@@ -13,6 +13,7 @@ import { MultiValue, SingleValue } from "react-select";
 import SelectMultiInput from "./SelectMultiInput";
 import SelectSingleInput from "./SelectSingleInput";
 import getPublicationById from "@/utils/getPublication";
+import axios from "axios";
 
 interface PublicationProps{
   editingPublicationId?:string
@@ -100,7 +101,6 @@ export default function PublicationForm({editingPublicationId}:PublicationProps)
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    let publication;
     let filesMetadata
     const formData = new FormData();
 
@@ -145,7 +145,7 @@ export default function PublicationForm({editingPublicationId}:PublicationProps)
 
     const tags = selectedTags ? selectedTags.map(tag=>({name:tag.label})) : [];
 
-    publication = {
+    const publication = {
           title:title,
           programingLanguageId:selectedProgramingLanguage?.value,
           categoryId:selectedCategory?.value,
@@ -159,7 +159,7 @@ export default function PublicationForm({editingPublicationId}:PublicationProps)
     formData.append('data', JSON.stringify(publication));
 
     console.log('Dados a serem enviados para a API:');
-      for (let [key, value] of formData.entries()) {
+      for (const [key, value] of formData.entries()) {
         if(value instanceof File){
           console.log(`${key}`,{name:value.name, size:value.size})
         }
@@ -182,8 +182,10 @@ export default function PublicationForm({editingPublicationId}:PublicationProps)
             toast.success("Dados salvos com sucesso!")
             router.back();
         }
-    } catch(error:any){
-        toast.error(`${error.response.data.error}`)
+    } catch(error){
+      if(axios.isAxiosError(error)){
+        toast.error(`${error.response?.data.error}`)
+      }
     }
   };
 

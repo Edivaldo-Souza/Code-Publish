@@ -10,12 +10,13 @@ services:
   backend_container:
     container_name: backend_container
     build: CodePublish/.
-    depends_on: backend_container
+    depends_on: 
+      - db_container
     ports:
-      8080:8080
+      - 8080:8080
 
   frontend_container:
     container_name: frontend_container
-    build: frontend/.
+    build: frontend/divulgacao_codigo/.
     ports:
-      3000:3000
+      - 3000:3000

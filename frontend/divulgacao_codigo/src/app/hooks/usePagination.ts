@@ -9,7 +9,7 @@ interface UsePaginationProps{
 }
 
 const range = (start:number, end:number) =>{
-    let length = end - start + 1;
+    const length = end - start + 1;
     return Array.from({length},(_,id)=> id+start)
 }
 
@@ -39,8 +39,8 @@ export const usePagination = ({
     const lastPageIndex = totalPageCount;
 
     if (!shouldShowLeftDots && shouldShowRightDots) {
-      let leftItemCount = 3 + 2 * siblingCount;
-      let leftRange = range(1, leftItemCount);
+      const leftItemCount = 3 + 2 * siblingCount;
+      const leftRange = range(1, leftItemCount);
 
       while(leftRange.length > totalPageCount - 2){
         leftRange.pop()
@@ -50,8 +50,8 @@ export const usePagination = ({
     }
 
     if (shouldShowLeftDots && !shouldShowRightDots) {
-      let rightItemCount = 3 + 2 * siblingCount;
-      let rightRange = range(
+      const rightItemCount = 3 + 2 * siblingCount;
+      const rightRange = range(
         totalPageCount - rightItemCount + 1,
         totalPageCount
       );
@@ -64,7 +64,7 @@ export const usePagination = ({
     }
 
     if (shouldShowLeftDots && shouldShowRightDots) {
-      let middleRange = range(leftSiblingIndex, rightSiblingIndex);
+      const middleRange = range(leftSiblingIndex, rightSiblingIndex);
       return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex];
     }
   }, [totalPageCount, siblingCount, currentPage]);

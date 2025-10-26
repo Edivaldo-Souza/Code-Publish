@@ -12,6 +12,7 @@ import api from "@/lib/api";
 import toast from "react-hot-toast";
 import { FaX } from "react-icons/fa6";
 import Link from 'next/link';
+import axios from "axios";
 
 interface PublicationDetailsProps{
     publicationId:string
@@ -132,8 +133,10 @@ export default function PublicationDetails({publicationId,redirect_to}:Publicati
             }
           }
         }
-      } catch(error:any){
-        toast.error(`${error.response.data.error}`)
+      } catch(error){
+        if(axios.isAxiosError(error)){
+          toast.error(`${error.response?.data.error}`)
+        }
       }
     }
     

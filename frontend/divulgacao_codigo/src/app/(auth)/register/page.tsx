@@ -2,6 +2,8 @@
 "use client";
 
 import api from '@/lib/api';
+import ResponseApiError from '@/types/error';
+import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, ChangeEvent, FormEvent } from 'react';
@@ -74,8 +76,10 @@ export default function PaginaCadastro() {
             router.push("/login")
 
         }
-        catch(error: any){
-            toast.error(`${error.response.data.error}`)
+        catch(error){
+          if(axios.isAxiosError(error)){
+            toast.error(`${error.response?.data.error}`)
+          }
         } finally{
             setIsLoading(false);
         }

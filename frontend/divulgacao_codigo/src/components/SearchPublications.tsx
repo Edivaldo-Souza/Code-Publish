@@ -2,6 +2,7 @@
 
 import { useEffect, useState, FormEvent, ChangeEvent, useMemo } from 'react';
 import api from '@/lib/api';
+import axios from "axios"
 import type { NextPage } from 'next';
 import Logout from '@/components/logout';
 import Link from 'next/link';
@@ -85,8 +86,10 @@ export default function SearchPublications({currentUserPublications,isLoggedIn}:
         const response = await api.get(`v1/publications?currentUserPublications=${currentUserPublications}&size=${ITEMS_PER_PAGE}&page=${pageIndex}&q=${searchInput}`)
         setTotalPages(response.data.data.totalPages)
         setPublications(response.data.data.content)
-      } catch(error: any){
-        toast.error(`${error.response.data.error}`)
+      } catch(error){
+        if(axios.isAxiosError(error)){
+          toast.error(`${error.response?.data.error}`)
+        }
       }
     }
 
@@ -149,8 +152,10 @@ export default function SearchPublications({currentUserPublications,isLoggedIn}:
         setTotalPages(response.data.data.totalPages)
         setPublications(response.data.data.content)
         setSearchInput(value)
-    } catch(error:any){
-        toast.error(`${error.response.data.error}`)
+    } catch(error){
+       if(axios.isAxiosError(error)){
+          toast.error(`${error.response?.data.error}`)
+        }
     }
   }
 
