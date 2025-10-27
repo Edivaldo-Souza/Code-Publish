@@ -1,7 +1,10 @@
+networks:
+  prod:
+    name: prod
+
 services:
   db_container:
     container_name: db_container
-    profiles: [prod]
     image: postgres:alpine
     environment:
       POSTGRES_USER: postgres
@@ -9,21 +12,34 @@ services:
       POSTGRES_DB: codepublish
     volumes:
       - ./db_container:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s     
+      timeout: 5s      
+      retries: 10      
+      start_period: 10s
+    networks:
+      - prod
 
   backend_container:
     container_name: backend_container
-    profiles: [prod]
     build: CodePublish/.
     depends_on: 
-      - db_container
+      db_container:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
     volumes:
       - ./uploads:/uploads
     ports:
       - 8080:8080
+    networks:
+      - prod
 
   frontend_container:
     container_name: frontend_container
-    profiles: [prod]
     build: frontend/divulgacao_codigo/.
     ports:
       - 3000:3000
+    networks:
+      - prod
