@@ -135,7 +135,10 @@ export default function PublicationDetails({publicationId,redirect_to}:Publicati
         }
       } catch(error){
         if(axios.isAxiosError(error)){
-          toast.error(`${error.response?.data.error}`)
+          if(error.status===403){
+            toast.error("É preciso estar logado para realizar essa ação")
+          }
+          else toast.error(`${error.response?.data.error}`)
         }
       }
     }

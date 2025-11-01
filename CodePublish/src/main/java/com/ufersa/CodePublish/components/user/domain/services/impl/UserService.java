@@ -88,6 +88,39 @@ public class UserService implements UserServiceInterface {
         return userRepository.save(user);
     }
 
+    public User updateCurrent(String token, User user) throws Exception {
+        DecodedJWT jwt = tokenService.decodeToken(token);
+        Optional<User> currentUser = userRepository.getByEmail(jwt.getSubject());
+        if(currentUser.isEmpty()) {
+            throw new Exception("Não foi possível encontrar o usuário para edição");
+        }
+
+        Optional<User> userWithSameUsername = userRepository.findByUsername(user.getUsername());
+        if (userWithSameUsername.isPresent() &&
+            !userWithSameUsername.get().getId().equals(currentUser.get().getId())) {
+            throw new Exception("Usuário com o nome de usuário: "+user.getUsername()
+                    + " já existente");
+        }
+
+        Optional<User> userWithSameEmail = userRepository.getByEmail(user.getEmail());
+        if (userWithSameEmail.isPresent() &&
+            !userWithSameEmail.get().getId().equals(currentUser.get().getId())) {
+            throw new Exception("Usuário com o email: "+user.getEmail()+" já existente");
+        }
+
+        if(user.getPassword()!=null && !user.getPassword().isBlank()){
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        else user.setPassword(currentUser.get().getPassword());
+
+        user.setId(currentUser.get().getId());
+        user.setRatingAmount(currentUser.get().getRatingAmount());
+        user.setRole(currentUser.get().getRole());
+        user.setPublicationAmount(currentUser.get().getPublicationAmount());
+
+        return userRepository.save(user);
+    }
+
     @Override
     public void delete(Long id) throws Exception {
         Optional<User> user = userRepository.findById(id);

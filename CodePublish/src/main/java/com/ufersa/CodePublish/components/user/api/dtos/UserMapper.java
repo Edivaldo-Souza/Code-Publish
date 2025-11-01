@@ -8,6 +8,7 @@ public class UserMapper {
     public UserDto userToUserDto(User user) {
         UserDto userDto = new UserDto();
         userDto.setUsername(user.getUsername());
+        userDto.setEmail(user.getEmail());
         userDto.setTotalRatings(user.getRatingAmount());
         userDto.setTotalPublications(user.getPublicationAmount());
         return userDto;
@@ -26,7 +27,7 @@ public class UserMapper {
         User user = new User();
         user.setUsername(updateUserDto.getUsername());
         user.setEmail(updateUserDto.getEmail());
-
+        user.setPassword(updateUserDto.getPassword());
         return user;
     }
 }

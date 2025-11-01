@@ -22,10 +22,11 @@ public class InitialMetadataPopulationService {
     public void persistInitialTags(){
         if(tagRepository.count()<1){
             String[] tagNames = {"java","python","csharp","cpp","javascript","typescript","php","go","rust","kotlin","swift","sql","bash",
-                    "backend","frontend","fullstack","api","cli-tool","desktop","mobile","micro servicos","web","batch-job",
-                    "autenticacao","autorizacao","banco de dados","upload de arquivo","data-processing","report-generation","scheduler","message-queue","rest-controller","ui",
+                    "backend","frontend","fullstack","api","cli-tool","desktop","mobile","micro servicos","web","tarefas em lote",
+                    "autenticacao","autorizacao","banco de dados","upload de arquivo","processamento de dados",
+                    "geracao de relatorio","scheduler","fila de mensagens","rest-controller","ui",
                     "financas","saude","educacao","ecommerce","logistica","crm","erp","iot","analytics",
-                    "example","template","teste","prototipo","producao","deprecated","experimental","estavel",
+                    "exemplo","template","teste","prototipo","producao","deprecated","experimental","estavel",
                     "springboot","django","flask","react","angular","vue","express","node","quarkus","laravel",
                     "mvc","hexagonal","clean-architecture","event-driven","monolito","ddd","cqrs","repository-pattern"};
             List<Tag> tags = new ArrayList<>();

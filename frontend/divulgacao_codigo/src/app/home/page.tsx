@@ -45,12 +45,12 @@ const HomePage:NextPage = () =>{
             </button>
             {isProfileMenuOpen && (
                             <div className="origin-top-right absolute right-2 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-10">
-                              <a
-                                href="#"
+                              <Link
+                                href="/user"
                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                               >
                                 Editar dados pessoais
-                              </a>
+                              </Link>
                               <Logout>
                               </Logout>
                             </div>

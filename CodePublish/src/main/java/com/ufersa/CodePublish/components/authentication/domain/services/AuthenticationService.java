@@ -28,12 +28,12 @@ public class AuthenticationService{
         var password = loginDto.getPassword();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
-        Optional<User> user = userRepository.getByEmail(email);
+        Optional<User> user = userRepository.getByEmail(loginDto.getEmail());
         TokenDto tokenDto = new TokenDto();
         if(user.isPresent()) {
             tokenDto.setUsername(user.get().getUsername());
         }
-        tokenDto.setToken(tokenService.generateToken(email));
+        tokenDto.setAccessToken(tokenService.generateToken(email));
 
         return tokenDto;
     }

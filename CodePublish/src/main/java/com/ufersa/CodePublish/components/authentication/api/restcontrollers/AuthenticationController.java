@@ -30,14 +30,14 @@ public class AuthenticationController {
         // Lógica de autenticação do usuário
         TokenDto token = authenticationService.signin(loginDto);
 
-        ResponseCookie cookie = ResponseCookie.from("accessToken", token.getToken())
+        ResponseCookie cookie = ResponseCookie.from("accessToken", token.getAccessToken())
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
                 .maxAge(28800)
                 .build();
 
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(token);
     }
 
     @PostMapping("/logout")
