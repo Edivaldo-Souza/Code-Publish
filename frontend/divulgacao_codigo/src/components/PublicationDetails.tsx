@@ -34,13 +34,13 @@ export default function PublicationDetails({publicationId,redirect_to}:Publicati
 
     const handleBackButton = () =>{
       const redirect = searchParams.get("redirect_to")
-      console.log(pathname)
+      
       if(redirect?.includes("login")){
         router.push("/publication/search/false/true")
       }
-      else if(redirect?.includes("lastPage")){
-        router.push(redirect)
-      }
+      //else if(redirect?.includes("lastPage")){
+      //  router.push(redirect)
+      //}
       else router.back()
     }
 
