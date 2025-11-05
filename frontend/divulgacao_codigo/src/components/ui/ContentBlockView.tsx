@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AttachedFile } from "@/types/publication";
+import CodePreview from "../CodePreview";
 
 const CopyIcon = () => <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>;
 const DownloadIcon = () => <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>;
@@ -27,14 +28,19 @@ export function ContentBlockView({attachedFile}:ContentBlockViewProps){
     element.click();
   };
 
+  function getFileExtension():string{
+    if(attachedFile.file){
+      return attachedFile.file.name.split(".")[1]
+    }
+    return "txt"
+  }
+
   return(
     <div className="border border-gray-200 rounded-lg">
-      <div className="relative bg-gray-800 rounded-t-lg">
+      <div className="relative bg-[rgb(17,27,39)] rounded-t-lg">
 
-          <div className="p-4 overflow-x-auto">
-            <pre className="text-indigo-200 text-sm whitespace-pre-wrap">
-              <code>{attachedFile.previewContent}</code>
-            </pre>
+          <div className="overflow-x-auto">
+            <CodePreview content={attachedFile.previewContent} language={getFileExtension()}/>
           </div>
         
         <div className="absolute top-3 right-3 flex items-center gap-2">

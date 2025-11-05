@@ -1,9 +1,5 @@
-
-interface AttachedFile{
-    id:number;
-    previewContent:string;
-    description:string;
-}
+import CodePreview from "./CodePreview";
+import { AttachedFile } from "@/types/publication";
 
 interface ContenBlockCardProps{
     attachedFile:AttachedFile,
@@ -12,7 +8,15 @@ interface ContenBlockCardProps{
 }
 
 export default function ContentBlockCard({attachedFile,onEdit,onDelete}:ContenBlockCardProps){
-    return(
+  
+  function getFileExtension():string{
+    if(attachedFile.file){
+      return attachedFile.file.name.split(".")[1]
+    }
+    return "txt"
+  }
+  
+  return(
     <div className="relative border border-gray-200 rounded-lg p-6 space-y-4">
           <div className="flex justify-end w-full">
             <button type="button"
@@ -23,11 +27,9 @@ export default function ContentBlockCard({attachedFile,onEdit,onDelete}:ContenBl
             </button>
           </div>
 
-      <div className="bg-gray-800 rounded-md overflow-hidden">
-          <div className="p-4 max-h-60 overflow-auto">
-            <pre className="text-indigo-200 text-sm whitespace-pre-wrap">
-              <code>{attachedFile.previewContent}</code>
-            </pre>
+      <div className="bg-[rgb(17,27,39)] rounded-md overflow-hidden">
+          <div className="max-h-60 overflow-auto">
+            <CodePreview content={attachedFile.previewContent} language={getFileExtension()} />
           </div>
       </div>
 

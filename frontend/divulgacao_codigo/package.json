@@ -14,11 +14,13 @@
     "jsonwebtoken": "^9.0.2",
     "next": "15.5.2",
     "next-auth": "^4.24.11",
+    "prism-react-renderer": "^2.4.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.5.0",
-    "react-select": "^5.10.2"
+    "react-select": "^5.10.2",
+    "react-syntax-highlighter": "^16.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -29,6 +31,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/react-select": "^5.0.0",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
     "tailwindcss": "^4",

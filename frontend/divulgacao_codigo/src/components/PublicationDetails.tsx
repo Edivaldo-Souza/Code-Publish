@@ -38,9 +38,9 @@ export default function PublicationDetails({publicationId,redirect_to}:Publicati
       if(redirect?.includes("login")){
         router.push("/publication/search/false/true")
       }
-      //else if(redirect?.includes("lastPage")){
-      //  router.push(redirect)
-      //}
+      else if(redirect?.includes("lastPage")){
+        router.push(redirect.split("lastPage")[0].concat("lastPage=1"))
+      }
       else router.back()
     }
 

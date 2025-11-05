@@ -180,7 +180,7 @@ export default function PublicationForm({editingPublicationId}:PublicationProps)
         }
         else{
             toast.success("Dados salvos com sucesso!")
-            router.back();
+            router.push("/publication/search/true/true");
         }
     } catch(error){
       if(axios.isAxiosError(error)){
