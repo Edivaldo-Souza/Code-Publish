@@ -13,6 +13,9 @@ export default function ContentBlockCard({attachedFile,onEdit,onDelete}:ContenBl
     if(attachedFile.file){
       return attachedFile.file.name.split(".")[1]
     }
+    if(attachedFile.fileResource){
+      return attachedFile.fileResource.name.split(".")[1]
+    }
     return "txt"
   }
   
@@ -27,10 +30,10 @@ export default function ContentBlockCard({attachedFile,onEdit,onDelete}:ContenBl
             </button>
           </div>
 
-      <div className="bg-[rgb(17,27,39)] rounded-md overflow-hidden">
-          <div className="max-h-60 overflow-auto">
-            <CodePreview content={attachedFile.previewContent} language={getFileExtension()} />
-          </div>
+      <div className="bg-[rgb(17,27,39)] p-4 rounded-md overflow-hidden">
+          <pre className="text-indigo-200 text-sm whitespace-pre-wrap">
+              <code>{attachedFile.previewContent}</code>
+            </pre>
       </div>
 
       <p className="text-black text-sm leading-relaxed">{attachedFile.description}</p>

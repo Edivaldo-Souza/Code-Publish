@@ -65,12 +65,11 @@ export default function PublicationForm({editingPublicationId}:PublicationProps)
                 component.file?.name,
                 component.file?.type
                 );
-                const previewContent = await fileResource.text();
+                let previewContent = await fileResource.text();
                 return { ...component, fileResource, previewContent};
             }
             return component;
           } catch (error) {
-            console.error(`Falha ao baixar o arquivo para o bloco ${component.id}:`, error);
             return component;
           }
         });
@@ -154,17 +153,17 @@ export default function PublicationForm({editingPublicationId}:PublicationProps)
           tags:tags
       }
 
-    console.log("publication_to_be_sent",publication)
+    //console.log("publication_to_be_sent",publication)
 
     formData.append('data', JSON.stringify(publication));
 
-    console.log('Dados a serem enviados para a API:');
+    /*console.log('Dados a serem enviados para a API:');
       for (const [key, value] of formData.entries()) {
         if(value instanceof File){
           console.log(`${key}`,{name:value.name, size:value.size})
         }
         console.log(`${key}:`, value);
-    }
+    }*/
 
     try{
         let response;

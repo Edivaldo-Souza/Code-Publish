@@ -63,7 +63,6 @@ export default function PublicationDetails({publicationId,redirect_to}:Publicati
                 }
                 return component;
             } catch (error) {
-                console.error(`Falha ao baixar o arquivo para o bloco ${component.id}:`, error);
                 return component;
             }
             });
@@ -145,6 +144,7 @@ export default function PublicationDetails({publicationId,redirect_to}:Publicati
     
     return(
         <main className="bg-slate-100 flex items-center justify-center min-h-screen p-4">
+          <div className="bg-white p-8 sm:p-12 rounded-xl shadow-lg w-full max-w-4xl">
             <div className="w-full max-w-4xl">
             <header className="flex justify-between items-start mb-6">
                 <h1 className="text-4xl sm:text-5xl font-bold text-gray-800">
@@ -205,6 +205,7 @@ export default function PublicationDetails({publicationId,redirect_to}:Publicati
             Voltar
           </button>
         </footer>
+        </div>
         </div>
         </main>
     )

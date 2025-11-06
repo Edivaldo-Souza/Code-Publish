@@ -125,7 +125,6 @@ export default function FileModal({isOpen,onClose,onSave,editingFile}:ModalProps
       return fileApi.name.split(".")[1]
     }
     if(file){
-      console.log(file.name.split(".")[1])
       return file.name.split(".")[1]
     }
     return "txt"
@@ -145,8 +144,10 @@ export default function FileModal({isOpen,onClose,onSave,editingFile}:ModalProps
 
         <div className="p-6 space-y-6">
           { filePreview ? (
-            <div className='bg-[rgb(17,27,39)] text-white rounded-md min-h-[200px] max-h-[200px] overflow-auto text-sm'>
-              <CodePreview content={filePreview} language={getFileExtension()}/>
+            <div className='bg-[rgb(17,27,39)] p-4 text-white rounded-md min-h-[200px] max-h-[200px] overflow-auto text-sm'>
+              <pre className="whitespace-pre-wrap text-left w-full text-indigo-200">
+                  <code>{filePreview}</code>
+              </pre>
             </div>
           ) : null}
           

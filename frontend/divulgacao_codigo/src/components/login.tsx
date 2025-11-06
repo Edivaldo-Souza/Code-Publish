@@ -47,7 +47,7 @@ export default function LoginPage() {
       if (err.response && err.response.status === 401) {
         setError('Credenciais inválidas.');
       } else {
-        setError('Ocorreu um erro. Tente novamente mais tarde.');
+        toast.error("Email ou senha inválidos")
       }
     }
   } finally {

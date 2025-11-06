@@ -21,9 +21,9 @@ export function ContentBlockView({attachedFile}:ContentBlockViewProps){
 
   const handleDownload = () => {
     const element = document.createElement("a");
-    const file = new Blob([attachedFile.previewContent], {type: 'text/plain'});
+    const file = new Blob([attachedFile.previewContent], {type: attachedFile.file?.type});
     element.href = URL.createObjectURL(file);
-    element.download = "codigo.txt";
+    element.download = `${attachedFile.file?.name}`;
     document.body.appendChild(element);
     element.click();
   };
@@ -52,7 +52,7 @@ export function ContentBlockView({attachedFile}:ContentBlockViewProps){
           </button>
         </div>
       </div>
-      <div className="p-6">
+      <div className="p-6 bg-white">
         <p className="text-gray-700 leading-relaxed">{attachedFile.description}</p>
       </div>
     </div>
