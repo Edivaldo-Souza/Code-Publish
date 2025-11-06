@@ -91,9 +91,10 @@ public class UserController {
 
         ResponseCookie cookie = ResponseCookie.from("accessToken",newToken)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
                 .maxAge(28800)
+                .domain(".koyeb.app")
                 .build();
 
         ApiResponse<UserDto> response = ResponseUtil
