@@ -39,7 +39,7 @@ export default function LoginPage() {
 
       router.push(url)
     }else{
-      router.push( redirectTo || '/home');
+      window.location.href = redirectTo || "/home";
     }
     
   } catch (err) {
