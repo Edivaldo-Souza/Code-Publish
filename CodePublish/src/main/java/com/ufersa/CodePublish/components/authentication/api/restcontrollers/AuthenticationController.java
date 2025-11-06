@@ -35,6 +35,7 @@ public class AuthenticationController {
                 .secure(false)
                 .path("/")
                 .maxAge(28800)
+                .domain("secure-tiffanie-myproject0211-cfa923f1.koyeb.app")
                 .build();
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(token);
@@ -45,6 +46,7 @@ public class AuthenticationController {
         ResponseCookie cookie = ResponseCookie.from("accessToken", null)
                 .path("/")
                 .maxAge(0)
+                .domain("secure-tiffanie-myproject0211-cfa923f1.koyeb.app")
                 .build();
 
         return ResponseEntity.ok()
