@@ -35,8 +35,7 @@ public class AuthenticationController {
                 .secure(true)
                 .path("/")
                 .maxAge(28800)
-                .domain("secure-tiffanie-myproject0211-cfa923f1.koyeb.app")
-                .sameSite("none")
+                .domain(".koyeb.app")
                 .build();
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(token);
@@ -45,9 +44,11 @@ public class AuthenticationController {
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser() {
         ResponseCookie cookie = ResponseCookie.from("accessToken", null)
+                .httpOnly(true)
+                .secure(true)
                 .path("/")
                 .maxAge(0)
-                .domain("secure-tiffanie-myproject0211-cfa923f1.koyeb.app")
+                .domain(".koyeb.app")
                 .build();
 
         return ResponseEntity.ok()
