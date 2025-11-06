@@ -50,11 +50,7 @@ public class FileService implements FileServiceInterface {
 
         newFile.setName(file.getOriginalFilename());
         newFile.setType(file.getContentType());
-        newFile.setUrl(ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path("v1/files/")
-                .path(uniqueName)
-                .toUriString());
+        newFile.setUrl("https://vivid-hedvige-myproject0211-04255184.koyeb.app/v1/files/" + uniqueName);
 
         return fileRepository.save(newFile);
     }
