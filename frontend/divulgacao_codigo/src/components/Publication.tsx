@@ -65,7 +65,7 @@ export default function PublicationForm({editingPublicationId}:PublicationProps)
                 component.file?.name,
                 component.file?.type
                 );
-                let previewContent = await fileResource.text();
+                const previewContent = await fileResource.text();
                 return { ...component, fileResource, previewContent};
             }
             return component;
