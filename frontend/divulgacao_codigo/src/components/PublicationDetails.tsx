@@ -173,7 +173,7 @@ export default function PublicationDetails({publicationId,redirect_to}:Publicati
           </p>
         </section>
 
-        {attachedFiles.length > 0 ?
+        {isLoading ? <p>Carregando arquivos...</p> : attachedFiles.length > 0 ?
           <section className="space-y-6">
           {attachedFiles.map(file => (
             <ContentBlockView key={file.id} attachedFile={file} />
