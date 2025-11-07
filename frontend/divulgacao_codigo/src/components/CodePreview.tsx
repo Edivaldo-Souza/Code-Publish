@@ -13,6 +13,7 @@ const CodePreview: React.FC<CodePreviewProps> = ({content,language}) =>{
         <SyntaxHighlighter
             language={language}
             style={coldarkDark}
+            customStyle={{backgroundImage:"none",backgroundColor: '#1E1E1E'}}
             showLineNumbers={true}
         >
             {String(content).trim()}
