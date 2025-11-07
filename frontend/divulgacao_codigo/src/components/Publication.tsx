@@ -89,7 +89,7 @@ export default function PublicationForm({editingPublicationId}:PublicationProps)
   };
 
   const handleBackButton = () =>{
-    router.back()
+    router.push("/publication/search/true/true")
   }
 
   const handleStartEditFile = (id: number) => {
