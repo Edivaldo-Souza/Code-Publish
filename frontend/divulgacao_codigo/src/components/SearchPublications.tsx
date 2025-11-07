@@ -194,7 +194,7 @@ export default function SearchPublications({currentUserPublications,isLoggedIn}:
                   </Link>
                 </nav>
                 <div className='w-240 flex justify-end'>
-                  <p className=''>{username}</p>
+                  <p className='text-white'>{username}</p>
                 </div>
                 <div className="p-2.5 bg-purple-100 rounded-full cursor-pointer">
                   <button 

@@ -36,7 +36,7 @@ const HomePage:NextPage = () =>{
           <nav className="flex items-center space-x-2" >
 
           </nav>
-          <p className='mr-4'>{user?.username}</p>
+          <p className='text-white mr-4'>{user?.username}</p>
           <div className="p-2.5 bg-purple-100 rounded-full cursor-pointer">
             <button 
               onClick={toggleProfileMenu}
