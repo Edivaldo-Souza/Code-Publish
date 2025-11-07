@@ -108,8 +108,11 @@ public class UserService implements UserServiceInterface {
             throw new Exception("Usuário com o email: "+user.getEmail()+" já existente");
         }
 
-        if(user.getPassword()!=null && !user.getPassword().isBlank()){
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if(user.getPassword()!=null){
+            if(user.getPassword().trim().length()<8){
+                throw new Exception("Senha inválida");
+            }
+            else user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         else user.setPassword(currentUser.get().getPassword());
 

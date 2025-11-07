@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { PasswordInput } from './PasswordInput';
 
 interface FormData {
   nome: string;
@@ -66,7 +67,7 @@ export default function UserDataPage({update}:UserDataPageProps) {
   };
 
   const handleCheckbox = (e: ChangeEvent<HTMLInputElement>) => {
-    setUpdatePassword(e.target.checked)
+    setUpdatePassword(!e.target.checked)
     console.log(updatePassword)
   }
 
@@ -115,7 +116,7 @@ export default function UserDataPage({update}:UserDataPageProps) {
             const requestForm = {
                 username: formData.nome,
                 email: formData.email,
-                password: updatePassword ? formData.senha : ''
+                password: updatePassword ? formData.senha : null
             }
 
             let response;
@@ -183,7 +184,7 @@ export default function UserDataPage({update}:UserDataPageProps) {
           </div>
 
           <div>
-            <input
+            <PasswordInput
               id="senha"
               name="senha"
               type="password"
@@ -198,7 +199,7 @@ export default function UserDataPage({update}:UserDataPageProps) {
           </div>
 
           <div>
-            <input
+            <PasswordInput
               id="confirmarSenha"
               name="confirmarSenha"
               type="password"

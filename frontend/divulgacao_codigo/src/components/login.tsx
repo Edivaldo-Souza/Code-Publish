@@ -7,6 +7,7 @@ import Link from 'next/link';
 import toast from 'react-hot-toast';
 import ResponseApiError from '@/types/error';
 import axios from 'axios';
+import { PasswordInput } from './PasswordInput';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -74,7 +75,7 @@ export default function LoginPage() {
           />
         </div>
         <div>
-          <input
+          <PasswordInput
             id="password"
             type="password"
             value={password}
