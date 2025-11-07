@@ -225,7 +225,6 @@ export default function UserDataPage({update}:UserDataPageProps) {
                     <input 
                         className='mr-2'
                         type='checkbox'
-                        checked={updatePassword}
                         onChange={handleCheckbox}
                     />
                     <p>Atualizar senha</p>
