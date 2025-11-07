@@ -116,7 +116,7 @@ export default function UserDataPage({update}:UserDataPageProps) {
             const requestForm = {
                 username: formData.nome,
                 email: formData.email,
-                password: updatePassword ? formData.senha : null
+                password: updatePassword && update ? formData.senha : null
             }
 
             let response;
