@@ -75,7 +75,6 @@ public interface PublicationRepository extends JpaRepository<Publication,Long> {
        LOWER(ct.name) LIKE LOWER(CONCAT('%', :q, '%')) OR
        LOWER(t.name) LIKE LOWER(CONCAT('%', :q, '%')) OR
        LOWER(c.description) LIKE LOWER(CONCAT('%', :q, '%')))
-       ORDER BY p.id ASC
 """)
     List<Long> findIdsWithUser(String q, @Param("userId") Long userId);
 
@@ -92,7 +91,6 @@ public interface PublicationRepository extends JpaRepository<Publication,Long> {
        LOWER(ct.name) LIKE LOWER(CONCAT('%', :q, '%')) OR
        LOWER(t.name) LIKE LOWER(CONCAT('%', :q, '%')) OR
        LOWER(c.description) LIKE LOWER(CONCAT('%', :q, '%')))
-       ORDER BY p.id ASC
 """)
     List<Long> findIds(String q);
 
@@ -103,7 +101,7 @@ public interface PublicationRepository extends JpaRepository<Publication,Long> {
        LEFT JOIN FETCH p.programingLanguage pl
        LEFT JOIN FETCH p.category ct
        WHERE p.id IN (:ids)
-       ORDER BY p.id ASC
+       ORDER BY p.upvotesAmount DESC
 """)
     Page<Publication> findByTextAndUser(List<Long> ids, Pageable pageable);
 }
