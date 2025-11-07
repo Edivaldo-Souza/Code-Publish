@@ -113,10 +113,20 @@ export default function UserDataPage({update}:UserDataPageProps) {
     if(Object.keys(novosErros).length === 0){
         setIsLoading(true);
         try{
-            const requestForm = {
+            let requestForm;
+            if(update){
+              requestForm = {
                 username: formData.nome,
                 email: formData.email,
-                password: updatePassword && update ? formData.senha : null
+                password: updatePassword ? formData.senha : null
+              }
+            }
+            else{
+              requestForm = {
+                username: formData.nome,
+                email: formData.email,
+                password: formData.senha
+              }
             }
 
             let response;
